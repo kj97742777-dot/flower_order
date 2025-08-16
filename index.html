@@ -1,109 +1,125 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>꽃배달 주문서</title>
   <style>
-    body { font-family:sans-serif; background:#ffffff; margin:0; padding:20px; }
-    .box { max-width:520px; margin:auto; background:#fff; padding:20px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,.08); }
-    h1 { margin-top:0; font-size:20px; text-align:center; }
-    label { font-weight:600; display:block; margin-top:12px; }
-    input, textarea { width:100%; padding:10px; border:1px solid #ccc; border-radius:8px; margin-top:6px; font-size:14px; }
-    textarea { min-height:80px; resize:vertical; }
-    .row { display:flex; gap:8px; }
-    .row > * { flex:1; }
-    .btn { margin-top:12px; width:100%; padding:12px; font-size:15px; font-weight:bold; border:0; border-radius:8px; cursor:pointer; }
-    .sms { background:#16a34a; color:#fff; }
-    .kakao { background:#fdd835; }
-    .save { background:#2563eb; color:#fff; }
-    .copymsg { font-size:13px; color:green; margin-top:6px; display:none; text-align:center; }
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #f9fafb;
+      margin: 0;
+      padding: 20px;
+    }
+    .box {
+      max-width: 500px;
+      margin: auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.1);
+    }
+    h1 {
+      font-size: 20px;
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+    h1 span {
+      color: #ff6699;
+      margin-right: 6px;
+    }
+    label {
+      font-weight: 600;
+      display: block;
+      margin-top: 14px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-top: 6px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    textarea {
+      min-height: 70px;
+      resize: vertical;
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .row input {
+      flex: 1;
+    }
+    .price {
+      margin-top: 12px;
+    }
+    .btn {
+      width: 100%;
+      padding: 12px;
+      margin-top: 14px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .btn.sms {
+      background: #22c55e;
+      color: white;
+    }
+    .btn.sms:hover {
+      background: #16a34a;
+    }
+    .btn.kakao {
+      background: #ffcc00;
+      color: #222;
+    }
+    .btn.kakao:hover {
+      background: #e6b800;
+    }
+    a {
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
   <div class="box">
-    <h1>🌸 꽃배달 주문서</h1>
+    <h1><span>🌸</span>꽃배달 주문서</h1>
 
     <label>주문자 성함</label>
-    <input id="name" placeholder="예) 홍길동" />
+    <input type="text" placeholder="예) 홍길동">
 
     <label>배달주소</label>
-    <textarea id="addr" placeholder="예) 대구 ○○구 ○○로 123"></textarea>
+    <textarea placeholder="예) 대구 ○○구 ○○로 123"></textarea>
 
     <label>리본문구</label>
-    <textarea id="card" placeholder="예) 사랑하는 부모님께, 건강하세요!"></textarea>
+    <textarea placeholder="예) 사랑하는 부모님께, 건강하세요!"></textarea>
 
     <div class="row">
       <div>
         <label>배달날짜</label>
-        <input id="date" type="date" />
+        <input type="date">
       </div>
       <div>
         <label>배달시간</label>
-        <input id="time" type="time" />
+        <input type="time">
       </div>
     </div>
 
-    <label>가격</label>
-    <input id="price" placeholder="예) 60000" inputmode="numeric" />
+    <label class="price">가격</label>
+    <input type="number" placeholder="예) 60000">
 
-    <button class="btn sms" onclick="sendSMS()">📩 문자로 보내기</button>
-    <button class="btn kakao" onclick="openKakao()">💬 카카오톡으로 보내기</button>
-    <button class="btn save" onclick="downloadTxt()">💾 .txt 파일로 저장</button>
+    <button class="btn sms">📩 문자로 보내기</button>
 
-    <div id="copymsg" class="copymsg">메시지가 복사되었습니다. 카톡창에 붙여넣기 하세요!</div>
+    <!-- 카카오톡 채널 채팅 링크 연결 -->
+    <a href="http://pf.kakao.com/_tFhWn/chat" target="_blank">
+      <button type="button" class="btn kakao">💬 카카오톡으로 보내기</button>
+    </a>
   </div>
-
-<script>
-  const KAKAO_URL = "http://pf.kakao.com/_tFhWn/chat"; // 👉 본인 카톡 채널 주소로 교체
-  const SMS_TO = "01050731777"; // 👉 문자 받을 번호로 교체
-
-  function normalizePrice(raw) {
-    if (!raw) return "";
-    const digits = raw.replace(/[^\d]/g, "");
-    if (!digits) return "";
-    return digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원";
-  }
-
-  function buildText() {
-    const name = document.getElementById('name').value.trim();
-    const addr = document.getElementById('addr').value.trim();
-    const card = document.getElementById('card').value.trim();
-    const date = document.getElementById('date').value;
-    const time = document.getElementById('time').value;
-    const price = normalizePrice(document.getElementById('price').value.trim());
-
-    let txt = "🌸 꽃배달 주문 요청\n";
-    if (name) txt += "• 주문자 성함: " + name + "\n";
-    if (addr) txt += "• 배달주소: " + addr + "\n";
-    if (card) txt += "• 리본문구: " + card + "\n";
-    if (date || time) txt += "• 배달날짜: " + [date,time].filter(Boolean).join(" ") + "\n";
-    if (price) txt += "• 가격: " + price + "\n";
-    txt += "\n※ 확인 부탁드립니다.";
-    return txt;
-  }
-
-  function copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(()=>{
-      const el=document.getElementById('copymsg');
-      el.style.display="block";
-      setTimeout(()=>el.style.display="none",2000);
-    });
-  }
-
-  function sendSMS() {
-    const txt = buildText();
-    const smsUrl = `sms:${SMS_TO}?&body=${encodeURIComponent(txt)}`;
-    window.location.href = smsUrl;
-  }
-
-  function openKakao() {
-    copyToClipboard(buildText());
-    window.open(KAKAO_URL,"_blank");
-  }
-
-  
-  }
-</script>
 </body>
 </html>
